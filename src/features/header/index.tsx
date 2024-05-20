@@ -18,7 +18,7 @@ import { ThemeBoxHovery } from "~/features/theme-box";
 import useLocalStorage from "~/hooks/useLocalStorage";
 import Button from "~/ui/buttons";
 import { Container } from "~/ui/containers";
-import { api } from "~/utils/api";
+import { api } from "~/trpc/react";
 import { Permission, User } from "~/types";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
@@ -26,7 +26,7 @@ import { twMerge } from "tailwind-merge";
 import DrawerView from "~/features/drawer-view";
 import { cn } from "~/lib/utils";
 import { AuthShowcase } from "~/features/header/show-case";
-import { getNextAuthSession } from "~/server/auth";
+import { getServerAuthSession } from "~/server/auth";
 
 function checkStatusForMenu(status, user) {
   if (status === "unauthenticated" || !user)
@@ -68,7 +68,7 @@ function LogoRamp({ className = "" }) {
   );
 }
 export default async function Header() {
-  const session = await getNextAuthSession();
+  const session = await getServerAuthSession();
 
   return (
     <>

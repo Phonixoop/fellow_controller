@@ -2,11 +2,11 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 import CreateAccountForm from "~/app/login/form";
-import { getNextAuthSession } from "~/server/auth";
+import { getServerAuthSession } from "~/server/auth";
 import BlurBackground from "~/ui/blur-backgrounds";
 
 export default async function LoginPage({}) {
-  const session = await getNextAuthSession();
+  const session = await getServerAuthSession();
   if (session) redirect("/");
 
   return (

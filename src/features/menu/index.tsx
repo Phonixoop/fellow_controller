@@ -1,10 +1,11 @@
+"use client";
 import React, { useState } from "react";
 import Link from "next/link";
 
 import { motion } from "framer-motion";
 
-import { useRouter } from "next/router";
-import { getPathName } from "~/utils/util";
+import { useRouter, usePathname } from "next/navigation";
+
 import { twMerge } from "tailwind-merge";
 import { ChevronDownIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import Button from "~/ui/buttons";
@@ -28,8 +29,7 @@ export default function Menu({
   isSub = false,
 }: MenuInput) {
   const [activeIndex, setActiveIndex] = useState(-1);
-  const router = useRouter();
-  const pathName = router.asPath;
+  const pathName = usePathname();
 
   return (
     <motion.div

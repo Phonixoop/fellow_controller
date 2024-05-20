@@ -1,37 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { ComponentType, ReactElement, useState } from "react";
 import Modal from "~/ui/modals";
-export default function withModalState(Component) {
-  return function WrappedwithModal({
-    content,
+
+interface WithModalProps {
+  children?: any;
+
+  isOpen?: boolean;
+  size?: string;
+  center?: boolean;
+  title?: string;
+  closeBtn?: ReactElement;
+  onClose?: () => void;
+  render?: (closeModal: () => void) => ReactElement;
+  [key: string]: any; // To accommodate any additional props
+}
+
+function withModalState<P>(
+  Component: ComponentType<P & { onClick: () => void }>,
+) {
+  return function WrappedWithModal({
+    children = <></>,
+
     isOpen = false,
     size,
     center = false,
     title = "",
     closeBtn = <></>,
     onClose = () => {},
-    render = (closeModal) => {},
+    render = () => null,
+
     ...rest
-  }) {
-    const [modal, setModal] = useState({ isOpen: false });
+  }: WithModalProps & P) {
+    const [modal, setModal] = useState({ isOpen });
 
     const openModal = () => setModal({ isOpen: true });
     const closeModal = () => setModal({ isOpen: false });
 
     return (
       <>
-        <Component onClick={openModal} {...rest}>
-          {content}
+        <Component onClick={openModal} {...(rest as P)}>
+          {children}
         </Component>
         <Modal
-          {...{
-            isOpen: modal.isOpen,
-            center,
-            size,
-            title,
-            onClose: closeModal,
-          }}
+          isOpen={modal.isOpen}
+          center={center}
+          size={size}
+          title={title}
+          onClose={closeModal}
         >
           {render(closeModal)}
         </Modal>
@@ -39,3 +55,5 @@ export default function withModalState(Component) {
     );
   };
 }
+
+export default withModalState;

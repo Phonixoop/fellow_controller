@@ -144,7 +144,3 @@ export const getServerAuthSession = () => getServerSession(authOptions);
 // }) => {
 //   return getServerSession(ctx.req, ctx.res, authOptions);
 // };
-
-export async function getNextAuthSession() {
-  return await getServerSession(authOptions);
-}

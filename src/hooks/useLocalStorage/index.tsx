@@ -1,8 +1,9 @@
+"use client";
 import { useEffect, useLayoutEffect, useState } from "react";
 
 export default function useLocalStorage<T>(
   key: string,
-  initialValue: T | (() => T)
+  initialValue: T | (() => T),
 ) {
   const canUseDOM: boolean = !!(
     typeof window !== "undefined" &&

@@ -18,7 +18,7 @@ import { ThemeBoxHovery } from "~/features/theme-box";
 import useLocalStorage from "~/hooks/useLocalStorage";
 import Button from "~/ui/buttons";
 import { Container } from "~/ui/containers";
-import { api } from "~/utils/api";
+
 import { Permission, User } from "~/types";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
@@ -74,7 +74,7 @@ export function AuthShowcase({ session }: { session: Session }) {
         </Button>{" "}
         <span className="hidden items-stretch justify-center gap-2 rounded-full stroke-accent px-3 text-accent sm:flex">
           <span className="">
-            {user?.display_name ? user.display_name : user.username}
+            {user?.display_name ? user?.display_name : user?.username}
           </span>
         </span>
         {isAdmin && (

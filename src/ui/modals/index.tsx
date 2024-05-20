@@ -113,7 +113,7 @@ export default function Modal({
 
   const ref = useRef<Element | null>(null);
 
-  const isOnMobile = windowSize?.width ?? 0 <= BREAK_POINT;
+  const isOnMobile = windowSize?.width <= BREAK_POINT;
   const canUseDOM = typeof window !== "undefined";
   const useIsomorphicLayoutEffect = canUseDOM ? useLayoutEffect : useEffect;
   // useEffect(() => {

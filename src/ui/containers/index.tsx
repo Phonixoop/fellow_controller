@@ -1,10 +1,11 @@
-import { twMerge } from "tailwind-merge";
+import { cn } from "~/lib/utils";
 
-export function Container({ children, className = "", rtl = false }) {
+export function Container({ children, className = "", rtl = false, ...rest }) {
   return (
     <div
-      className={twMerge("w-full p-1 sm:w-11/12 ", className)}
+      className={cn("w-full p-1 sm:w-11/12 ", className)}
       dir={rtl ? "rtl" : ""}
+      {...rest}
     >
       {children}
     </div>
@@ -18,7 +19,7 @@ export function ContainerBottomBorder({
 }) {
   return (
     <div
-      className={twMerge(
+      className={cn(
         " flex w-full items-center justify-center border-b border-b-primary/10",
         className,
       )}

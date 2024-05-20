@@ -3,9 +3,9 @@ import { MultiSelect, MultiSelectItem } from "@tremor/react";
 import { ListXIcon, ListChecksIcon } from "lucide-react";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { ServiceNamesType } from "~/constants/depo";
+
 import Button from "~/ui/buttons";
-import { api } from "~/utils/api";
+
 import {
   Tooltip,
   TooltipContent,
@@ -35,7 +35,7 @@ export default function CheckboxList({ checkboxes, onCheckboxChange }) {
   );
 }
 
-export function SelectControlled({
+export function SelectControlledOld({
   list = [],
   value,
   onChange,
@@ -128,7 +128,7 @@ export function SelectColumnFilter({
   const selectAllState = selectedCount < unique.length;
   return (
     <div className=" flex w-full items-center justify-center gap-2 px-2 text-center sm:px-0 ">
-      <SelectControlled
+      <SelectControlledOld
         className="min-w-0"
         title={column.columnDef.header}
         list={unique}

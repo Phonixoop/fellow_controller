@@ -1,9 +1,7 @@
 import { ListRestartIcon } from "lucide-react";
-import { useState } from "react";
+
 import { Permission } from "~/types";
 import { Switch } from "~/components/ui/switch";
-import { PERMISSIONS } from "~/constants";
-import Button from "~/ui/buttons";
 
 export default function PermissionPanel({
   permissions,
@@ -84,7 +82,7 @@ export default function PermissionPanel({
             className="flex w-full  flex-col items-center justify-center gap-5"
           >
             <div
-              className="relative flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-4 hover:bg-primbuttn/5"
+              className="relative flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-4 hover:bg-accent/5"
               onClick={() => handlePermissionToggle(permission.id)}
             >
               <Switch
@@ -131,9 +129,9 @@ function SubPermissionList({
     (subPermission) => subPermission.isActive,
   ).length;
   return (
-    <div className="flex w-full  flex-col items-end justify-center rounded-xl bg-secbuttn p-2  ">
+    <div className="flex w-full  flex-col items-end justify-center rounded-xl bg-accent/10 p-2  ">
       <div
-        className="relative flex w-full cursor-pointer items-center justify-end gap-3 rounded-xl px-2 py-4 hover:bg-primbuttn/5"
+        className="relative flex w-full cursor-pointer items-center justify-end gap-3 rounded-xl px-2 py-4 hover:bg-accent/5"
         onClick={() => {
           toggleAll(permission);
         }}
@@ -153,7 +151,7 @@ function SubPermissionList({
         subPermissions.map((permission) => (
           <div
             key={permission.id}
-            className="relative flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-4 hover:bg-primbuttn/5"
+            className="relative flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-4 hover:bg-accent/5"
             onClick={() => handlePermissionToggle(permission.id)}
           >
             <Switch
