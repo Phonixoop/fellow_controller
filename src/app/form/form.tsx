@@ -25,6 +25,9 @@ import withModalState from "~/ui/modals/with-modal-state";
 import { ComboboxDemo } from "~/app/form/list-box";
 import { SelectControlled } from "~/app/form/checkbox-list";
 import TextAreaField from "~/ui/forms/textarea-field";
+import { api } from "~/trpc/react";
+import { createFormSchema } from "~/server/validations/form.validation";
+import { toFormikValidationSchema } from "zod-formik-adapter";
 
 type FormType = {
   date: string; // private
@@ -75,6 +78,7 @@ const initialValues = {
   appendices: ["ثبت نهایی", "سند رسمی"],
 };
 export default function FormBuilder() {
+  const createForm = api.form.create.useMutation();
   const formik = useFormik<FormType>({
     initialValues: {
       date: "",
@@ -101,51 +105,31 @@ export default function FormBuilder() {
       financial_Processing: "",
       audit: "",
     },
-    onSubmit: (values) => {},
+    validationSchema: toFormikValidationSchema(createFormSchema),
+    onSubmit: (values) => {
+      createForm.mutate({
+        title: values.title,
+        form_number: values.form_number,
+        appendices: JSON.stringify(values.appendices),
+        audit: values.audit,
+        description: values.description,
+        considerations: values.considerations,
+        financial_Processing: values.financial_Processing,
+        rules: values.rules,
+        time: values.time,
+        accounting_document_table: values.accounting_document_table,
+      });
+    },
   });
-
-  // const formFields = Object.keys(formik.values).map((fieldName) => (
-  //   <div key={fieldName} className=" flex flex-col items-end justify-center">
-  //     <TextFieldWithLabel
-  //       label={fieldName}
-  //       className="bg-secondary"
-  //       {...formik.getFieldProps(fieldName)}
-  //     />
-  //     <InputError message={(formik.errors as any)[fieldName]} />
-  //   </div>
-  // ));
-  // const tableFields = Object.keys(formik.values.accounting_document_table).map(
-  //   (fieldName) => (
-  //     <tr key={fieldName}>
-  //       {Object.values(formik.values.accounting_document_table).map((item) => {
-  //         return (
-  //           <>
-  //             <td>
-  //               {JSON.stringify(fieldName)}
-  //               <TextFieldWithLabel
-  //                 label={getFormPersianName(fieldName)}
-  //                 className="bg-secondary"
-  //                 {...formik.getFieldProps(fieldName)}
-  //               />
-  //             </td>
-  //             <td>
-  //               <InputError message={(formik.errors as any)[fieldName]} />
-  //             </td>
-  //           </>
-  //         );
-  //       })}
-  //     </tr>
-  //   ),
-  // );
 
   return (
     <>
       <form
         onSubmit={formik.handleSubmit}
         dir="rtl"
-        className="flex w-6/12 flex-col items-center justify-center "
+        className=" flex w-6/12 flex-col  items-center justify-center"
       >
-        <FlexCol>
+        <FlexCol className=" justify-start  rounded-lg bg-secondary p-2">
           <FlexRow className="w-full gap-0">
             <div className=" flex w-9/12 flex-col  justify-center ">
               {getInputComponent({
@@ -187,15 +171,16 @@ export default function FormBuilder() {
             <div className="flex w-full flex-col gap-2">
               {formik.values.accounting_document_table.map((item, i) => (
                 <div
-                  className="flex flex-row items-stretch justify-center gap-1"
+                  className="flex flex-row items-center justify-center gap-1 px-2"
                   key={i}
                 >
                   {Object.keys(item).map((fieldName) => (
                     <>
-                      <div key={fieldName} className=" ">
+                      <div key={fieldName} className="">
                         {getInputComponent({
                           label: getFormPersianName(fieldName),
                           textArea: true,
+                          focused: true,
                           withModal: true,
                           value: formik.getFieldProps(
                             `accounting_document_table[${i}].${fieldName}`,
@@ -263,52 +248,6 @@ export default function FormBuilder() {
                 <DiamondPlusIcon />
               </Button>
             </div>
-            {/* <table className="w-auto border-collapse  text-sm">
-              <caption className="text-xl">سند حسابداری</caption>
-              <thead>
-                <tr>
-                  <Th>گروه</Th>
-                  <Th>کل</Th>
-                  <Th>معین</Th>
-                  <Th>سطح 4</Th>
-                  <Th>سطح 5</Th>
-                  <Th>سطح 6</Th>
-                  <Th>توضیحات</Th>
-                  <Th>بدهکار</Th>
-                  <Th>بستانکار</Th>
-                </tr>
-              </thead>
-              <tbody>
-               
-                <tr className="w-full">
-                  <td colSpan={9}>
-                    <div className="w-full bg-accent">
-                      <Button
-                        className="w-full flex-1 bg-accent"
-                        onClick={() => {
-                          formik.setFieldValue("accounting_document_table", [
-                            ...formik.values.accounting_document_table,
-                            {
-                              group: "",
-                              total: "",
-                              moeen: "",
-                              level_4: "",
-                              level_5: "",
-                              level_6: "",
-                              description: "",
-                              debtor: "",
-                              creditor: "",
-                            },
-                          ]);
-                        }}
-                      >
-                        <DiamondPlusIcon />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table> */}
           </div>
           <FlexCol className="w-full">
             <div className="w-full justify-center">
@@ -390,6 +329,9 @@ export default function FormBuilder() {
               <InputError message={formik.errors.appendices} />
             </div>
           </FlexCol>
+          <Button type="submit" className="w-full bg-accent/10 text-accent ">
+            ثبت
+          </Button>
         </FlexCol>
       </form>
     </>
@@ -457,12 +399,14 @@ type GetInputComponentType = {
   label: string;
   textArea?: boolean;
   withModal?: boolean;
+  focused?: boolean;
   onChange: (newValue: string | string[]) => void;
 };
 function getInputComponent({
   list = [""],
   value = "" || [""],
   label = "",
+  focused = false,
   textArea = false,
   withModal = false,
   onChange,
@@ -531,6 +475,7 @@ function getInputComponent({
               <>
                 <TextAreaFieldWithLabel
                   className="w-full bg-accent/10"
+                  focused={focused}
                   label={label}
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
@@ -545,7 +490,8 @@ function getInputComponent({
     if (textArea)
       return (
         <TextAreaFieldWithLabel
-          className="w-full"
+          className="w-full bg-transparent"
+          focused={focused}
           label={label}
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -553,7 +499,8 @@ function getInputComponent({
       );
     return (
       <TextFieldWithLabel
-        className="w-full"
+        className="w-full bg-transparent"
+        focused={focused}
         label={label}
         value={value}
         onChange={(e) => onChange(e.target.value)}

@@ -55,3 +55,43 @@ model Verification_token {
     @@unique([identifier, token])
     @@map("verification_tokens")
 }
+
+model Form {
+    id                  Int                           @id @default(autoincrement())
+    title               String
+    form_number         String
+    description         String                        @db.Text
+    accountingDocuments FormAccountingDocumentTable[] @relation("FormToDocuments")
+    appendices          String                        @db.Text
+    rules               String                        @db.Text
+    considerations      String                        @db.Text
+    time                String                        @db.Text
+    audit               String                        @db.Text
+    financialProcessing String                        @map("financial_Processing")
+
+    created_at DateTime  @default(now())
+    updated_at DateTime?
+
+    @@map("forms")
+}
+
+model FormAccountingDocumentTable {
+    id          Int    @id @default(autoincrement())
+    formId      Int
+    group       String
+    total       String
+    moeen       String
+    level_4     String
+    level_5     String
+    level_6     String
+    description String @db.Text
+    debtor      String
+    creditor    String
+
+    form Form @relation("FormToDocuments", fields: [formId], references: [id])
+
+    created_at DateTime  @default(now())
+    updated_at DateTime?
+
+    @@map("FormAccountingDocumentTables")
+}

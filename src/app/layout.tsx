@@ -33,7 +33,7 @@ export default function RootLayout({
           style={{
             position: "sticky",
             bottom: "25px",
-            marginTop: "25px",
+
             zIndex: "1000",
           }}
         ></div>
