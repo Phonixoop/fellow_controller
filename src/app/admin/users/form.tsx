@@ -58,7 +58,7 @@ export function UserForm({
 }) {
   const getRole = api.role.getAll.useQuery();
   const { selectedRowUser, setSelectedRowUser } = useUser();
-  const utils = api.useContext();
+  const utils = api.useUtils();
   const user = sessionUser ?? selectedRowUser ?? undefined;
 
   const createUser = api.user.createUser.useMutation({
@@ -213,11 +213,7 @@ export function UserForm({
           />
           <InputError message={formik.errors.display_name} />
         </div>
-        {!getRole.isPending &&
-          getRole.data.map((role) => {
-            return <>{role.name}</>;
-          })}
-        {formik.values.roleId}
+
         <div className="z-30  flex w-full flex-col items-start justify-start gap-5">
           {!getRole.isPending && getRole.data && (
             <>
@@ -236,6 +232,7 @@ export function UserForm({
               />
             </>
           )}
+          <InputError message={formik.errors.roleId} />
         </div>
         <Button
           disabled={!formik.isValid}

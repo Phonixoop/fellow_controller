@@ -11,10 +11,13 @@ import {
 } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import MultiStep from "~/features/multi-step";
-import { createUserSchema } from "~/server/validations/user.validation";
+import {
+  createUserSchema,
+  userLoginSchema,
+} from "~/server/validations/user.validation";
 import Button from "~/ui/buttons";
 import InputError from "~/ui/forms/input-error";
 import PasswordField from "~/ui/forms/password-field";
@@ -41,11 +44,11 @@ export default function CreateAccountForm() {
       password: "",
     },
 
-    validationSchema: toFormikValidationSchema(createUserSchema),
+    validationSchema: toFormikValidationSchema(userLoginSchema),
     validateOnBlur: true,
     onSubmit: async (values: typeof createUserSchema._type) => {},
   });
-
+  const passwordFieldRef = useRef(null);
   const [step, setStep] = useState(0);
   function Enter(e: any) {
     if (e.keyCode == 13) {
@@ -53,6 +56,7 @@ export default function CreateAccountForm() {
     }
   }
   async function goTo(stepNumber: number) {
+    console.log(passwordFieldRef.current);
     if (formik.isValid && stepNumber >= 2) {
       setStep(2);
       setIsLoading(true);
@@ -139,6 +143,7 @@ export default function CreateAccountForm() {
                   formik.setFieldValue("password", value.target.value);
                 }}
                 type="password"
+                ref={passwordFieldRef}
                 onKeyDown={(e: any) => Enter(e)}
               />
 

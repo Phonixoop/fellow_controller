@@ -171,6 +171,9 @@ export default function Modal({
                   center ? "laptopMin:items-center" : "items-end",
                   ` fixed  flex items-end justify-center overflow-hidden bg-secondary/30 backdrop-blur-md ${zIndex} inset-0  `,
                 )}
+                style={{
+                  zIndex: 1000,
+                }}
               >
                 <motion.div
                   ref={boxRef}
@@ -194,6 +197,7 @@ export default function Modal({
                     center ? "mobileMin:rounded-2xl" : "rounded-t-2xl",
                     "relative z-[101] flex  flex-col  items-center  justify-center gap-0 overflow-hidden border  border-accent/50  ",
                     isOnMobile ? "h-full" : "",
+                    className,
                   )}
 
                   // h-auto top-52

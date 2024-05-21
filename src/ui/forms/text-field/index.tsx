@@ -1,9 +1,10 @@
 import {
   useEffect,
   useRef,
-  FC,
+  forwardRef,
   ChangeEvent,
   ComponentPropsWithoutRef,
+  Ref,
 } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -21,35 +22,31 @@ interface TextFieldProps {
   onFocus?: () => void;
 }
 
-const TextField: FC<TextFieldProps> = ({
-  children = <></> || "",
-  className = ``,
-  value,
-  placeholder = " ",
-  isRtl = true,
-  min = 0,
-  max = 1000,
-  onChange = () => {},
-  onValueChange = () => {},
-  focused = false,
-  onFocus = () => {},
+const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({ children = <>
 
-  ...rest
-}) => {
+    </> || "", className = ``, value, placeholder = " ", isRtl = true, min = 0, max = 1000, onChange = () => {}, onValueChange = () => {}, focused = false, onFocus = () => {}, ...rest }, ref: Ref<HTMLInputElement>) => {
   function parse(value: string) {
     return value.slice(min, max);
   }
 
   const direction = `${isRtl ? "text-right" : "text-left"}`;
-  const ref = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const placeholderRef = useRef<HTMLLabelElement>(null);
 
   useEffect(() => {
-    if (!focused || !ref.current || !placeholderRef.current) return;
+    if (!focused || !inputRef.current || !placeholderRef.current) return;
 
-    ref.current.focus();
+    inputRef.current.focus();
     placeholderRef.current.style.opacity = "1";
   }, [focused]);
+
+  useEffect(() => {
+    if (typeof ref === "function") {
+      ref(inputRef.current);
+    } else if (ref) {
+      (ref as any).current = inputRef.current;
+    }
+  }, [ref]);
 
   return (
     <>
@@ -65,20 +62,20 @@ const TextField: FC<TextFieldProps> = ({
       {children}
       <input
         dir={isRtl ? "rtl" : "ltr"}
-        ref={ref}
+        ref={inputRef}
         type="text"
         className={twMerge(
           direction,
           `selection:text-secondry peer
-          block 
-          w-full
-          appearance-none rounded-t-lg border-b-2 border-primary 
-          bg-transparent 
-          px-2.5 
-          pb-2.5 pt-5 
-          text-sm font-bold text-primary 
-          placeholder:opacity-0 focus:border-accent focus:outline-none  
-          focus:ring-0 focus:placeholder:opacity-100`,
+            block 
+            w-full
+            appearance-none rounded-t-lg border-b-2 border-primary 
+            bg-transparent 
+            px-2.5 
+            pb-2.5 pt-5 
+            text-sm font-bold text-primary 
+            placeholder:opacity-0 focus:border-accent focus:outline-none  
+            focus:ring-0 focus:placeholder:opacity-100`,
           className,
         )}
         placeholder={" "}
@@ -103,28 +100,28 @@ const TextField: FC<TextFieldProps> = ({
       <label
         ref={placeholderRef}
         onClick={() => {
-          if (ref.current) ref.current.focus();
+          if (inputRef.current) inputRef.current.focus();
         }}
         className="placeholder absolute
-        right-2.5
-        top-9
-        origin-top-right
-        -translate-y-4
-        scale-75
-        transform 
-        text-sm
-        text-secondary 
-        opacity-0
-        duration-300
-        peer-placeholder-shown:scale-100
-        peer-focus:text-primary
-        mobileMax:peer-focus:opacity-100 
-      "
+          right-2.5
+          top-9
+          origin-top-right
+          -translate-y-4
+          scale-75
+          transform 
+          text-sm
+          text-secondary 
+          opacity-0
+          duration-300
+          peer-placeholder-shown:scale-100
+          peer-focus:text-primary
+          mobileMax:peer-focus:opacity-100 
+        "
       >
         {placeholder}
       </label>
     </>
   );
-};
+});
 
 export default TextField;

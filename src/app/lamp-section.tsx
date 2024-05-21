@@ -3,6 +3,7 @@
 import React from "react";
 import { LampContainer } from "~/app/_components/lamp";
 import { motion } from "framer-motion";
+import { signIn } from "next-auth/react";
 export default function LampSection() {
   return (
     <div>

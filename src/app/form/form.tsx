@@ -63,7 +63,6 @@ function ButtonForSetListBoxModal({ children, ...rest }: { children: any }) {
         {...rest}
         className="flex min-w-fit items-center justify-center gap-1 bg-secondary px-3 text-primary"
       >
-        <SquareAsteriskIcon className="stroke-primary" />
         {children}
       </Button>
     </>
@@ -71,7 +70,7 @@ function ButtonForSetListBoxModal({ children, ...rest }: { children: any }) {
 }
 
 const ListBoxWithModal = withModalState(ButtonForSetListBoxModal);
-
+const ButtonWithModal = withModalState(ButtonForSetListBoxModal);
 const initialValues = {
   appendices: ["ثبت نهایی", "سند رسمی"],
 };
@@ -185,7 +184,7 @@ export default function FormBuilder() {
           </div>
           <div className="flex w-full flex-col gap-2 bg-accent/5 pt-5">
             <H2 className="pb-4 text-center text-xl font-bold">سند حسابداری</H2>
-            <div className="w-full">
+            <div className="flex w-full flex-col gap-2">
               {formik.values.accounting_document_table.map((item, i) => (
                 <div
                   className="flex flex-row items-stretch justify-center gap-1"
@@ -194,20 +193,23 @@ export default function FormBuilder() {
                   {Object.keys(item).map((fieldName) => (
                     <>
                       <div key={fieldName} className=" ">
-                        <TextFieldWithLabel
-                          label={getFormPersianName(fieldName)}
-                          value={
-                            formik.getFieldProps(
-                              `accounting_document_table[${i}].${fieldName}`,
-                            ).value
-                          }
-                          onChange={(e) => {
+                        {getInputComponent({
+                          label: getFormPersianName(fieldName),
+                          textArea: true,
+                          withModal: true,
+                          value: formik.getFieldProps(
+                            `accounting_document_table[${i}].${fieldName}`,
+                          ).value,
+                          onChange: (
+                            value: string | string[] | boolean | boolean[],
+                          ) => {
                             formik.setFieldValue(
                               `accounting_document_table[${i}].${fieldName}`,
-                              e.target.value,
+                              value,
                             );
-                          }}
-                        />
+                          },
+                        })}
+
                         {/* <InputError message={(formik.errors.accounting_document_table[index] as any)?.[fieldName]} /> */}
                       </div>
                     </>
@@ -454,6 +456,7 @@ type GetInputComponentType = {
   value: string | string[];
   label: string;
   textArea?: boolean;
+  withModal?: boolean;
   onChange: (newValue: string | string[]) => void;
 };
 function getInputComponent({
@@ -461,6 +464,7 @@ function getInputComponent({
   value = "" || [""],
   label = "",
   textArea = false,
+  withModal = false,
   onChange,
 }: GetInputComponentType): JSX.Element {
   if (Array.isArray(value)) {
@@ -488,7 +492,7 @@ function getInputComponent({
         /> */}
 
         <SelectControlled
-          className="min-w-80"
+          className="z-0 min-w-80"
           withSelectAll
           title={label}
           list={list}
@@ -515,6 +519,29 @@ function getInputComponent({
       </>
     );
   } else {
+    if (textArea && withModal)
+      return (
+        <ButtonWithModal
+          className="bg-accent/10"
+          size="xs"
+          center
+          title={label}
+          render={(onClose) => {
+            return (
+              <>
+                <TextAreaFieldWithLabel
+                  className="w-full bg-accent/10"
+                  label={label}
+                  value={value}
+                  onChange={(e) => onChange(e.target.value)}
+                />
+              </>
+            );
+          }}
+        >
+          {label}
+        </ButtonWithModal>
+      );
     if (textArea)
       return (
         <TextAreaFieldWithLabel

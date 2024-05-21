@@ -6,7 +6,8 @@ import { api } from "~/trpc/react";
 
 import Button from "~/ui/buttons";
 
-export function RolesList({ onChange = (role: Role) => {} }) {
+export function RolesList({ session, onChange = (role: Role) => {} }) {
+  if (!session) return <></>;
   const roles = api.role.getAll.useQuery();
 
   return (

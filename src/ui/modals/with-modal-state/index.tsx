@@ -5,7 +5,7 @@ import Modal from "~/ui/modals";
 
 interface WithModalProps {
   children?: any;
-
+  className?: string;
   isOpen?: boolean;
   size?: string;
   center?: boolean;
@@ -21,7 +21,7 @@ function withModalState<P>(
 ) {
   return function WrappedWithModal({
     children = <></>,
-
+    className = "",
     isOpen = false,
     size,
     center = false,
@@ -43,6 +43,7 @@ function withModalState<P>(
           {children}
         </Component>
         <Modal
+          className={className}
           isOpen={modal.isOpen}
           center={center}
           size={size}
