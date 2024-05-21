@@ -3,7 +3,10 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { createUserSchema } from "~/server/validations/user.validation";
+import {
+  createUserSchema,
+  updateUserSchema,
+} from "~/server/validations/user.validation";
 
 import TextField from "~/ui/forms/text-field";
 
@@ -91,7 +94,9 @@ export function UserForm({
       roleId: selectedRowUser?.roleId || "",
     },
 
-    validationSchema: toFormikValidationSchema(createUserSchema),
+    validationSchema: toFormikValidationSchema(
+      selectedRowUser ? updateUserSchema : createUserSchema,
+    ),
     validateOnBlur: true,
     onSubmit: (values: typeof createUserSchema._type) => {
       if (!user)
@@ -103,7 +108,7 @@ export function UserForm({
         });
 
       return updateUser.mutate({
-        id: user.id,
+        id: selectedRowUser.id,
         username: values?.username || "",
         display_name: values?.display_name || "",
         roleId: values.roleId,
@@ -114,8 +119,9 @@ export function UserForm({
   useEffect(() => {
     formik.setValues((a) => {
       return {
+        id: selectedRowUser?.id ?? "",
         username: selectedRowUser?.username || "",
-        password: selectedRowUser?.password || "",
+        password: "",
         display_name: selectedRowUser?.display_name || "",
         roleId: selectedRowUser?.roleId || "",
       };
@@ -125,6 +131,7 @@ export function UserForm({
   return (
     <>
       <form
+        key={selectedRowUser ? "1" : "0"}
         onSubmit={(e) => {
           formik.handleSubmit(e);
         }}
