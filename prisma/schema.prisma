@@ -68,9 +68,9 @@ model Form {
     time                String                        @db.Text
     audit               String                        @db.Text
     financialProcessing String                        @map("financial_Processing")
-
-    created_at DateTime  @default(now())
-    updated_at DateTime?
+    file_path           String?                       @db.Text
+    created_at          DateTime                      @default(now())
+    updated_at          DateTime?
 
     @@map("forms")
 }

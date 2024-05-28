@@ -1,3 +1,5 @@
+"use client";
+
 import { AreaChart } from "@tremor/react";
 import {
   ArrowUpFromDotIcon,
@@ -418,6 +420,7 @@ export default function Table({
                               header.column.columnDef.footer,
                               header.getContext(),
                             );
+
                             return (
                               <th
                                 key={header.id}

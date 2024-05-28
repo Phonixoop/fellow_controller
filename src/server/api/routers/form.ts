@@ -1,4 +1,8 @@
+import { createWriteStream } from "fs";
+import path from "path";
 import { z } from "zod";
+import { generateUUID } from "~/lib/utils";
+import { writeFileToDisk } from "~/lib/write-file-to-disk";
 
 import {
   createTRPCRouter,
@@ -13,6 +17,7 @@ export const formRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return await ctx.db.form.create({
         data: {
+          file_path: input.file_url,
           appendices: JSON.stringify(input.appendices),
           audit: input.audit,
           considerations: input.considerations,

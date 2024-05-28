@@ -39,10 +39,11 @@ import { toast } from "sonner";
 import { cn, generateUUID, validateFileType } from "~/lib/utils";
 import Button from "~/ui/buttons";
 import ExcelIcon from "~/ui/icons/excel";
-import { api, RouterOutputs } from "~/utils/api";
+
 import { date } from "zod";
 import ThreeDotsWave from "~/ui/loadings/three-dots-wave";
 import moment from "jalali-moment";
+import { api } from "~/trpc/react";
 // Reducer action(s)
 const addFilesToInput = () => ({
   type: "ADD_FILES_TO_INPUT" as const,

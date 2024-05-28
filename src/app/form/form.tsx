@@ -28,8 +28,12 @@ import TextAreaField from "~/ui/forms/textarea-field";
 import { api } from "~/trpc/react";
 import { createFormSchema } from "~/server/validations/form.validation";
 import { toFormikValidationSchema } from "zod-formik-adapter";
+import { formData } from "zod-form-data";
+import { toast } from "sonner";
 
 type FormType = {
+  file: any;
+
   date: string; // private
 
   title: string;
@@ -81,6 +85,7 @@ export default function FormBuilder() {
   const createForm = api.form.create.useMutation();
   const formik = useFormik<FormType>({
     initialValues: {
+      file: undefined,
       date: "",
       form_number: "",
       title: "",
@@ -106,8 +111,23 @@ export default function FormBuilder() {
       audit: "",
     },
     validationSchema: toFormikValidationSchema(createFormSchema),
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      const formData = new FormData();
+      formData.append("file", values.file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data?.fileUrl?.length <= 0) {
+        toast("خطا در آپلود فایل");
+        return;
+      }
       createForm.mutate({
+        file_url: data.fileUrl,
         title: values.title,
         form_number: values.form_number,
         appendices: JSON.stringify(values.appendices),
@@ -249,14 +269,13 @@ export default function FormBuilder() {
               </Button>
             </div>
           </div>
-          <FlexCol className="w-full">
+          <FlexCol className="w-full gap-4">
             <div className="w-full justify-center">
               {getInputComponent({
                 label: "ضمائم",
                 list: initialValues.appendices,
                 value: formik.values.appendices as string[],
                 onChange: (values) => {
-                  console.log({ value: formik.values.appendices });
                   formik.setFieldValue("appendices", values);
                 },
               })}
@@ -274,7 +293,7 @@ export default function FormBuilder() {
                 },
               })}
 
-              <InputError message={formik.errors.appendices} />
+              <InputError message={formik.errors.rules} />
             </div>
             <div className="w-full justify-center">
               {getInputComponent({
@@ -287,7 +306,7 @@ export default function FormBuilder() {
                 },
               })}
 
-              <InputError message={formik.errors.appendices} />
+              <InputError message={formik.errors.considerations} />
             </div>
             <div className="w-full justify-center">
               {getInputComponent({
@@ -300,7 +319,7 @@ export default function FormBuilder() {
                 },
               })}
 
-              <InputError message={formik.errors.appendices} />
+              <InputError message={formik.errors.time} />
             </div>
             <div className="w-full justify-center">
               {getInputComponent({
@@ -313,7 +332,7 @@ export default function FormBuilder() {
                 },
               })}
 
-              <InputError message={formik.errors.appendices} />
+              <InputError message={formik.errors.financial_Processing} />
             </div>
             <div className="w-full justify-center">
               {getInputComponent({
@@ -326,10 +345,22 @@ export default function FormBuilder() {
                 },
               })}
 
-              <InputError message={formik.errors.appendices} />
+              <InputError message={formik.errors.audit} />
             </div>
           </FlexCol>
-          <Button type="submit" className="w-full bg-accent/10 text-accent ">
+          <div className="w-full ">
+            <input
+              type="file"
+              onChange={(event) => {
+                formik.setFieldValue("file", event.currentTarget.files[0]);
+              }}
+            />
+          </div>
+          <Button
+            type="submit"
+            isLoading={createForm.isPending}
+            className="w-full bg-accent/10 text-accent "
+          >
             ثبت
           </Button>
         </FlexCol>
@@ -442,7 +473,6 @@ function getInputComponent({
           list={list}
           value={value}
           onChange={(values: any) => {
-            console.log({ values });
             onChange(values);
           }}
         />
